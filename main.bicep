@@ -22,6 +22,14 @@ param acrResourceGroupName string = ''
 @description('Subscription ID where connected ACR \'acrName\' is. If not set, current subscription will be used.')
 param acrSubscriptionId string = ''
 
+@description('Name of the user assigned identity used for pod identities.')
+param podIdentityName string = 'aks-pod-identity'
+
+resource askPodIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
+  name: podIdentityName
+  location: location
+}
+
 // Monitoring addon for AKS.
 var _aksAddonOmsAgent = empty(logAnalyticsWorkspaceResourceId) ? {} : {
   omsagent: {
@@ -54,6 +62,13 @@ resource aks 'Microsoft.ContainerService/managedClusters@2021-11-01-preview' = {
       }
     ]
     addonProfiles: _aksAddonProfiles
+    networkProfile: {
+      networkPlugin: 'azure'
+    }
+    podIdentityProfile: {
+      enabled: true
+      allowNetworkPluginKubenet: false
+    }
   }
 }
 
@@ -68,3 +83,5 @@ module acrRoleAssignment 'modules/acrRoleAssignment.bicep' = if (!empty(acrName)
     acrName: acrName
   }
 }
+
+output podIdentityResourceId string = askPodIdentity.id

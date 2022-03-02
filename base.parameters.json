@@ -17,11 +17,14 @@
         "acrName": {
             "value": ""
         },
+        "acrResourceGroupName": {
+            "value": ""
+        },
         "acrSubscriptionId": {
             "value": ""
         },
-        "acrResourceGroupName": {
-            "value": ""
+        "podIdentityName": {
+            "value": "aks-pod-identity"
         }
     }
 }
