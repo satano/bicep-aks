@@ -14,17 +14,35 @@
         "logAnalyticsWorkspaceResourceId": {
             "value": ""
         },
-        "acrName": {
-            "value": ""
-        },
-        "acrResourceGroupName": {
-            "value": ""
-        },
-        "acrSubscriptionId": {
-            "value": ""
-        },
         "podIdentityName": {
             "value": "aks-pod-identity"
+        },
+        "defaultResourceGroupName": {
+            "value": ""
+        },
+        "defaultSubscriptionId": {
+            "value": ""
+        },
+        "acr": {
+            "value": {
+                "name": "",
+                "resourceGroupName": "",
+                "subscriptionId": ""
+            }
+        },
+        "appConfig": {
+            "value": {
+                "name": "",
+                "resourceGroupName": "",
+                "subscriptionId": ""
+            }
+        },
+        "keyVault": {
+            "value": {
+                "name": "",
+                "resourceGroupName": "",
+                "subscriptionId": ""
+            }
         }
     }
 }
