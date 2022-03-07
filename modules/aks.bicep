@@ -16,7 +16,7 @@ param logAnalyticsWorkspaceResourceId string = ''
 @description('Name of the user assigned identity used for pod identities.')
 param podIdentityName string = 'aks-pod-identity'
 
-resource aksPodIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
+resource podIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
   name: podIdentityName
   location: location
 }
@@ -32,6 +32,10 @@ var _aksAddonOmsAgent = empty(logAnalyticsWorkspaceResourceId) ? {} : {
 }
 var _aksAddonProfiles = union({}, _aksAddonOmsAgent)
 
+// This name is automatically generated when AKS is created.
+// But we need the value before, to use it as a scope in 'nodeRsgRoleAssignment'.
+var _nodeResourceGroupName = 'MC_${resourceGroup().name}_${aksName}_${location}'
+
 resource aks 'Microsoft.ContainerService/managedClusters@2021-11-01-preview' = {
   name: aksName
   location: location
@@ -44,6 +48,7 @@ resource aks 'Microsoft.ContainerService/managedClusters@2021-11-01-preview' = {
   }
   properties: {
     dnsPrefix: aksName
+    nodeResourceGroup: _nodeResourceGroupName
     agentPoolProfiles: [
       {
         name: 'system'
@@ -63,6 +68,17 @@ resource aks 'Microsoft.ContainerService/managedClusters@2021-11-01-preview' = {
   }
 }
 
+module nodeRsgRoleAssignment 'rsgRoleAssignment.bicep' = {
+  name: 'nodeRsgRoleAssignment'
+  scope: resourceGroup(_nodeResourceGroupName)
+  params: {
+    principalId: podIdentity.properties.principalId
+    resourceGroupName: aks.properties.nodeResourceGroup
+    // Virtual Machine Contributor (https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles)
+    roleId: '9980e02c-c2be-4d73-94e8-173b1dc7cf3c'
+  }
+}
+
 output aks object = {
   id: aks.id
   name: aks.name
@@ -76,9 +92,8 @@ output aks object = {
 }
 
 output podIdentity object = {
-  id: aksPodIdentity.id
-  name: aksPodIdentity.name
-  clientId: aksPodIdentity.properties.clientId
-  principalId: aksPodIdentity.properties.principalId
-  tenantId: aksPodIdentity.properties.tenantId
+  id: podIdentity.id
+  name: podIdentity.name
+  clientId: podIdentity.properties.clientId
+  principalId: podIdentity.properties.principalId
 }

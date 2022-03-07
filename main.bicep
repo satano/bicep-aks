@@ -61,7 +61,7 @@ module acrRoleAssignment 'modules/acrRoleAssignment.bicep' = if (!empty(acr.name
   name: 'acrRoleAssignment'
   scope: resourceGroup(_acrSubscriptionId, _acrResourceGroupName)
   params: {
-    principalId: aks.outputs.aks.kubeletIdentityId
+    principalId: aks.outputs.aks.kubeletIdentity.objectId
     acrName: acr.name
   }
 }
