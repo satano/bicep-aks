@@ -46,8 +46,11 @@ param keyVault object = {
   subscriptionId: ''
 }
 
+@description('Service Bus Namespace parameters. Required property is "name", optional properties are "queues" and "topics".')
+param serviceBus object
+
 module aks 'modules/aks.bicep' = {
-  name: 'aks'
+  name: '${deployment().name}-aks'
   params: {
     location: location
     aksName: aksName
@@ -62,7 +65,7 @@ module aks 'modules/aks.bicep' = {
 var _acrSubscriptionId = empty(acr.subscriptionId) ? empty(defaultSubscriptionId) ? subscription().subscriptionId : defaultSubscriptionId : acr.subscriptionId
 var _acrResourceGroupName = empty(acr.resourceGroupName) ? empty(defaultResourceGroupName) ? resourceGroup().name : defaultResourceGroupName : acr.resourceGroupName
 module acrRoleAssignment 'modules/acrRoleAssignment.bicep' = if (!empty(acr.name)) {
-  name: 'acrRoleAssignment'
+  name: '${deployment().name}-acrRoleAssignment'
   scope: resourceGroup(_acrSubscriptionId, _acrResourceGroupName)
   params: {
     principalId: aks.outputs.aks.kubeletIdentity.objectId
@@ -73,7 +76,7 @@ module acrRoleAssignment 'modules/acrRoleAssignment.bicep' = if (!empty(acr.name
 var _appConfigSubscriptionId = empty(appConfig.subscriptionId) ? empty(defaultSubscriptionId) ? subscription().subscriptionId : defaultSubscriptionId : appConfig.subscriptionId
 var _appConfigResourceGroupName = empty(appConfig.resourceGroupName) ? empty(defaultResourceGroupName) ? resourceGroup().name : defaultResourceGroupName : appConfig.resourceGroupName
 module appConfigRoleAssignment 'modules/appConfigRoleAssignment.bicep' = if (!empty(appConfig.name)) {
-  name: 'appConfigRoleAssignment'
+  name: '${deployment().name}-appConfigRoleAssignment'
   scope: resourceGroup(_appConfigSubscriptionId, _appConfigResourceGroupName)
   params: {
     principalId: aks.outputs.podIdentity.principalId
@@ -84,7 +87,7 @@ module appConfigRoleAssignment 'modules/appConfigRoleAssignment.bicep' = if (!em
 var _kvSubscriptionId = empty(keyVault.subscriptionId) ? empty(defaultSubscriptionId) ? subscription().subscriptionId : defaultSubscriptionId : keyVault.subscriptionId
 var _kvResourceGroupName = empty(keyVault.resourceGroupName) ? empty(defaultResourceGroupName) ? resourceGroup().name : defaultResourceGroupName : keyVault.resourceGroupName
 module kvAccessPolicies 'modules/kvAccessPolicies.bicep' = if (!empty(keyVault.name)) {
-  name: 'kvAccessPolicies'
+  name: '${deployment().name}-kvAccessPolicies'
   scope: resourceGroup(_kvSubscriptionId, _kvResourceGroupName)
   params: {
     principalId: aks.outputs.podIdentity.principalId
@@ -92,5 +95,16 @@ module kvAccessPolicies 'modules/kvAccessPolicies.bicep' = if (!empty(keyVault.n
   }
 }
 
+module serviceBusNamespace 'modules/serviceBus.bicep' = {
+  name: '${deployment().name}-serviceBus'
+  params: {
+    name: serviceBus.name
+    location: location
+    queues: serviceBus.queues
+    topics: serviceBus.topics
+  }
+}
+
 output aks object = aks.outputs.aks
 output aksPodIdentity object = aks.outputs.podIdentity
+output serviceBus object = serviceBusNamespace.outputs.serviceBus

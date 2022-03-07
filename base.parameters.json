@@ -46,6 +46,136 @@
                 "resourceGroupName": "",
                 "subscriptionId": ""
             }
+        },
+        "serviceBus": {
+            "value": {
+                "name": "",
+                "queues": [],
+                "topics": [
+                    {
+                        "name": "kros.esw.contracts.authorization~idefaultpermissionchangedmessage",
+                        "subscriptions": [
+                            "default-permission-changed-authorization"
+                        ]
+                    },
+                    {
+                        "name": "kros.esw.contracts.authorization~ilastloginchangedmessage",
+                        "subscriptions": [
+                            "lastloginchanged_statistics"
+                        ]
+                    },
+                    {
+                        "name": "kros.esw.contracts.authorization~ipaymentcreatedmessage",
+                        "subscriptions": [
+                            "paymentcreated_statistics"
+                        ]
+                    },
+                    {
+                        "name": "kros.esw.contracts.authorization~iusertrialstartedmessage",
+                        "subscriptions": [
+                            "UserTrialStartedSubscription"
+                        ]
+                    },
+                    {
+                        "name": "kros.esw.contracts.catalogitem~icatalogitemdeletedmessage",
+                        "subscriptions": [
+                            "DeletedCatalogItemSubscription"
+                        ]
+                    },
+                    {
+                        "name": "kros.esw.contracts.catalogitem~icatalogitemrecalculatemessage",
+                        "subscriptions": [
+                            "CatalogItemRecalculate"
+                        ]
+                    },
+                    {
+                        "name": "kros.esw.contracts.catalogitem~ientitychangemessage",
+                        "subscriptions": [
+                            "EntityChanged"
+                        ]
+                    },
+                    {
+                        "name": "kros.esw.contracts.company~icompanylicensechangedmessage",
+                        "subscriptions": [
+                            "licensechanged_sendinblue"
+                        ]
+                    },
+                    {
+                        "name": "kros.esw.contracts.deliverynote~ideliverynotedeletedmessage",
+                        "subscriptions": [
+                            "DeletedDeliveryNoteSubscription"
+                        ]
+                    },
+                    {
+                        "name": "kros.esw.contracts.entitychange~ientitychangemessage",
+                        "subscriptions": [
+                            "UpdateEntityIndexes"
+                        ]
+                    },
+                    {
+                        "name": "kros.esw.contracts.entitychange~iupdateallentityindexesfromrowversionmessage",
+                        "subscriptions": [
+                            "UpdateAllEntityIndexesFromRowversion"
+                        ]
+                    },
+                    {
+                        "name": "kros.esw.contracts.exports~iexportgeneratemessage",
+                        "subscriptions": [
+                            "ExportGenerator"
+                        ]
+                    },
+                    {
+                        "name": "kros.esw.contracts.imports~iimportstartedmessage",
+                        "subscriptions": [
+                            "ImportProductsExcel"
+                        ]
+                    },
+                    {
+                        "name": "kros.esw.contracts.invoice~iinvoicedeletedmessage",
+                        "subscriptions": [
+                            "DeletedInvoiceSubscription"
+                        ]
+                    },
+                    {
+                        "name": "kros.esw.contracts.priceoffer~ipriceofferdeletedmessage",
+                        "subscriptions": [
+                            "PriceOfferDeletedUpdateIndexesAzFun"
+                        ]
+                    },
+                    {
+                        "name": "kros.esw.contracts.proformainvoice~iproformainvoicedeletedmessage",
+                        "subscriptions": [
+                            "DeletedProformaInvoiceSubscriptionAzFunc"
+                        ]
+                    },
+                    {
+                        "name": "kros.esw.contracts.projecttask~iprojecttaskattachmentcreatedmessage",
+                        "subscriptions": [
+                            "notification"
+                        ]
+                    },
+                    {
+                        "name": "kros.esw.contracts.projecttask~iprojecttaskcreatedmessage",
+                        "subscriptions": [
+                            "notification"
+                        ]
+                    },
+                    {
+                        "name": "kros.esw.contracts.projecttask~iprojecttaskpatchedmessage",
+                        "subscriptions": [
+                            "notification",
+                            "patchedtask_statistics"
+                        ]
+                    },
+                    {
+                        "name": "kros.esw.contracts.timelogs~itimelogchangedmessage",
+                        "subscriptions": [
+                            "changedtimelog_statistics",
+                            "signalr-timelogchanged"
+                        ]
+                    }
+                ]
+            }
         }
     }
 }
