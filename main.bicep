@@ -1,23 +1,8 @@
 @description('Location for created resources.')
 param location string = resourceGroup().location
 
-@description('Name of the Azure Kubernetes Service to create.')
-param aksName string
-
-@description('Node size for the system node pool.')
-param aksNodeVmSize string = 'Standard_B4ms'
-
-@description('Node count in the system node pool.')
-param aksNodeCount int = 1
-
-@description('The maximum number of pods that can run on a node.')
-param aksMaxPods int = 60
-
-@description('Full resource ID for log analytics workspace. If set, monitoring agent addon is enabled on AKS.')
-param logAnalyticsWorkspaceResourceId string = ''
-
-@description('Name of the user assigned identity used for pod identities.')
-param podIdentityName string = 'aks-pod-identity'
+@description('Settings of the Azure Kubernetes Service to create.')
+param aks object
 
 @description('Default resource group for other "external" resources, if not specified with the resource itself.')
 param defaultResourceGroupName string = ''
@@ -49,16 +34,16 @@ param keyVault object = {
 @description('Service Bus Namespace parameters. Required property is "name", optional properties are "queues" and "topics".')
 param serviceBus object
 
-module aks 'modules/aks.bicep' = {
+module aksCluster 'modules/aks.bicep' = {
   name: '${deployment().name}-aks'
   params: {
     location: location
-    aksName: aksName
-    aksNodeVmSize: aksNodeVmSize
-    aksNodeCount: aksNodeCount
-    aksMaxPods: aksMaxPods
-    podIdentityName: podIdentityName
-    logAnalyticsWorkspaceResourceId: logAnalyticsWorkspaceResourceId
+    name: aks.name
+    nodeVmSize: aks.nodeVmSize
+    nodeCount: aks.nodeCount
+    maxPods: aks.maxPods
+    podIdentityName: aks.podIdentityName
+    logAnalyticsWorkspaceResourceId: aks.logAnalyticsWorkspaceResourceId
   }
 }
 
@@ -68,7 +53,7 @@ module acrRoleAssignment 'modules/acrRoleAssignment.bicep' = if (!empty(acr.name
   name: '${deployment().name}-acrRoleAssignment'
   scope: resourceGroup(_acrSubscriptionId, _acrResourceGroupName)
   params: {
-    principalId: aks.outputs.aks.kubeletIdentity.objectId
+    principalId: aksCluster.outputs.aks.kubeletIdentity.objectId
     acrName: acr.name
   }
 }
@@ -79,7 +64,7 @@ module appConfigRoleAssignment 'modules/appConfigRoleAssignment.bicep' = if (!em
   name: '${deployment().name}-appConfigRoleAssignment'
   scope: resourceGroup(_appConfigSubscriptionId, _appConfigResourceGroupName)
   params: {
-    principalId: aks.outputs.podIdentity.principalId
+    principalId: aksCluster.outputs.podIdentity.principalId
     appConfigName: appConfig.name
   }
 }
@@ -90,7 +75,7 @@ module kvAccessPolicies 'modules/kvAccessPolicies.bicep' = if (!empty(keyVault.n
   name: '${deployment().name}-kvAccessPolicies'
   scope: resourceGroup(_kvSubscriptionId, _kvResourceGroupName)
   params: {
-    principalId: aks.outputs.podIdentity.principalId
+    principalId: aksCluster.outputs.podIdentity.principalId
     keyVaultName: keyVault.name
   }
 }
@@ -105,6 +90,6 @@ module serviceBusNamespace 'modules/serviceBus.bicep' = {
   }
 }
 
-output aks object = aks.outputs.aks
-output aksPodIdentity object = aks.outputs.podIdentity
+output aks object = aksCluster.outputs.aks
+output aksPodIdentity object = aksCluster.outputs.podIdentity
 output serviceBus object = serviceBusNamespace.outputs.serviceBus

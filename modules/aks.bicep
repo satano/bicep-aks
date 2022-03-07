@@ -2,16 +2,16 @@
 param location string = resourceGroup().location
 
 @description('Name of the Azure Kubernetes Service to create.')
-param aksName string
+param name string
 
 @description('Node size for the system node pool.')
-param aksNodeVmSize string = 'Standard_B4ms'
+param nodeVmSize string = 'Standard_B4ms'
 
 @description('Node count in the system node pool.')
-param aksNodeCount int = 1
+param nodeCount int = 1
 
 @description('The maximum number of pods that can run on a node.')
-param aksMaxPods int = 60
+param maxPods int = 60
 
 @description('Full resource ID for log analytics workspace. If set, monitoring agent addon is enabled on AKS.')
 param logAnalyticsWorkspaceResourceId string = ''
@@ -37,10 +37,10 @@ var _aksAddonProfiles = union({}, _aksAddonOmsAgent)
 
 // This name is automatically generated when AKS is created.
 // But we need the value before, to use it as a scope in 'nodeRsgRoleAssignment'.
-var _nodeResourceGroupName = 'MC_${resourceGroup().name}_${aksName}_${location}'
+var _nodeResourceGroupName = 'MC_${resourceGroup().name}_${name}_${location}'
 
 resource aks 'Microsoft.ContainerService/managedClusters@2021-11-01-preview' = {
-  name: aksName
+  name: name
   location: location
   sku: {
     name: 'Basic'
@@ -50,15 +50,15 @@ resource aks 'Microsoft.ContainerService/managedClusters@2021-11-01-preview' = {
     type: 'SystemAssigned'
   }
   properties: {
-    dnsPrefix: aksName
+    dnsPrefix: name
     nodeResourceGroup: _nodeResourceGroupName
     agentPoolProfiles: [
       {
         name: 'system'
-        vmSize: aksNodeVmSize
-        count: aksNodeCount
+        vmSize: nodeVmSize
+        count: nodeCount
         mode: 'System' // At least one system pool is mandatory.
-        maxPods: aksMaxPods
+        maxPods: maxPods
       }
     ]
     addonProfiles: _aksAddonProfiles

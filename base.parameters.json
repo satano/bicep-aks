@@ -2,23 +2,15 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "aksName": {
-            "value": ""
-        },
-        "aksNodeVmSize": {
-            "value": "Standard_B4ms"
-        },
-        "aksNodeCount": {
-            "value": 1
-        },
-        "aksMaxPods": {
-            "value": 60
-        },
-        "logAnalyticsWorkspaceResourceId": {
-            "value": ""
-        },
-        "podIdentityName": {
-            "value": "aks-pod-identity"
+        "aks": {
+            "value": {
+                "name": "",
+                "nodeVmSize": "Standard_B4ms",
+                "nodeCount": 1,
+                "maxPods": 60,
+                "logAnalyticsWorkspaceResourceId": "",
+                "podIdentityName": "aks-pod-identity"
+            }
         },
         "defaultResourceGroupName": {
             "value": ""
