@@ -10,6 +10,9 @@ param aksNodeVmSize string = 'Standard_B4ms'
 @description('Node count in the system node pool.')
 param aksNodeCount int = 1
 
+@description('The maximum number of pods that can run on a node.')
+param aksMaxPods int = 60
+
 @description('Full resource ID for log analytics workspace. If set, monitoring agent addon is enabled on AKS.')
 param logAnalyticsWorkspaceResourceId string = ''
 
@@ -50,6 +53,7 @@ module aks 'modules/aks.bicep' = {
     aksName: aksName
     aksNodeVmSize: aksNodeVmSize
     aksNodeCount: aksNodeCount
+    aksMaxPods: aksMaxPods
     podIdentityName: podIdentityName
     logAnalyticsWorkspaceResourceId: logAnalyticsWorkspaceResourceId
   }

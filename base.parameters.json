@@ -11,6 +11,9 @@
         "aksNodeCount": {
             "value": 1
         },
+        "aksMaxPods": {
+            "value": 60
+        },
         "logAnalyticsWorkspaceResourceId": {
             "value": ""
         },
